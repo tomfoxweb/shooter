@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DrawableType } from './game/drawable/drawable';
+import { DrawableType } from './game/drawable';
 
 interface TypeImage {
   type: DrawableType;
@@ -20,6 +20,7 @@ export class ImageProviderService {
   constructor() {
     this.images = new Map([
       [DrawableType.Player, { url: 'assets/images/player.png' }],
+      [DrawableType.Missle, { url: 'assets/images/missle.png' }],
     ]);
   }
 

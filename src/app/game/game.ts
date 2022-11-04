@@ -1,14 +1,16 @@
 import { ImageProviderService } from '../image-provider.service';
-import { Rectangle } from './core/boundable';
-import { intersect } from './core/intersect';
-import { DrawableType } from './drawable/drawable';
-import { Player } from './drawable/player';
+import { Rectangle } from './boundable';
+import { DrawableType } from './drawable';
+import { intersect } from './intersect';
+import { Missle } from './missle';
+import { Player } from './player';
 
 export class Game {
   private imageProvider: ImageProviderService;
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private player: Player;
+  private missle: Missle;
   private leftBorder: Rectangle;
   private rightBorder: Rectangle;
   private topBorder: Rectangle;
@@ -33,6 +35,7 @@ export class Game {
     };
     this.ctx = this.canvas.getContext('2d')!;
     this.player = this.createPlayer();
+    this.missle = this.createMissle();
     this.startGameLoop();
   }
 
@@ -64,6 +67,7 @@ export class Game {
     this.ctx.save();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.player.draw(this.ctx);
+    this.missle.draw(this.ctx);
     this.ctx.restore();
   }
 
@@ -74,5 +78,14 @@ export class Game {
     const y = this.canvas.height - playerHeight - 10;
     const image = this.imageProvider.getImage(DrawableType.Player);
     return new Player(x, y, playerWidth, playerHeight, image);
+  }
+
+  private createMissle(): Missle {
+    const width = 5;
+    const height = 32;
+    const x = this.canvas.width / 2;
+    const y = this.canvas.height / 2;
+    const image = this.imageProvider.getImage(DrawableType.Missle);
+    return new Missle(x, y, width, height, image);
   }
 }

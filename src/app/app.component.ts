@@ -5,8 +5,6 @@ import {
   HostListener,
   ViewChild,
 } from '@angular/core';
-import { DrawableType } from './game/drawable/drawable';
-import { Player } from './game/drawable/player';
 import { Game } from './game/game';
 import { ImageProviderService } from './image-provider.service';
 
