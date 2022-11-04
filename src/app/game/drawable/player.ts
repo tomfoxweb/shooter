@@ -7,6 +7,7 @@ export class Player extends PlayerShip implements Drawable {
   private height: number;
   private y: number;
   private image: HTMLImageElement;
+  private bounds: Rectangle;
 
   constructor(
     x: number,
@@ -20,6 +21,17 @@ export class Player extends PlayerShip implements Drawable {
     this.width = width;
     this.height = height;
     this.image = image;
+    this.bounds = { x: x - width / 2, y: y, w: width, h: height };
+  }
+
+  override left() {
+    super.left();
+    this.bounds.x = this.getX() - this.width / 2;
+  }
+
+  override right() {
+    super.right();
+    this.bounds.x = this.getX() - this.width / 2;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -31,6 +43,6 @@ export class Player extends PlayerShip implements Drawable {
   }
 
   getBounds(): Rectangle {
-    throw new Error('Method not implemented.');
+    return this.bounds;
   }
 }

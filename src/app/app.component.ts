@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  ViewChild,
+} from '@angular/core';
 import { DrawableType } from './game/drawable/drawable';
 import { Player } from './game/drawable/player';
 import { Game } from './game/game';
@@ -12,8 +18,23 @@ import { ImageProviderService } from './image-provider.service';
 export class AppComponent implements AfterViewInit {
   title = 'shooter';
   private game!: Game;
+  private imagesLoaded = false;
 
   @ViewChild('canvasGame') canvasGame!: ElementRef<HTMLCanvasElement>;
+
+  @HostListener('window:keydown.ArrowRight', ['$event'])
+  handleArrowRight(event: KeyboardEvent) {
+    if (this.imagesLoaded && this.game) {
+      this.game.right();
+    }
+  }
+
+  @HostListener('window:keydown.ArrowLeft', ['$event'])
+  handleArrowLeft(event: KeyboardEvent) {
+    if (this.imagesLoaded && this.game) {
+      this.game.left();
+    }
+  }
 
   constructor(private imageProvider: ImageProviderService) {}
 
@@ -23,6 +44,7 @@ export class AppComponent implements AfterViewInit {
     canvas.width = Number.parseInt(css.width);
     canvas.height = Number.parseInt(css.height);
     await this.imageProvider.loadImages();
+    this.imagesLoaded = true;
     this.game = new Game(this.imageProvider, canvas);
   }
 }

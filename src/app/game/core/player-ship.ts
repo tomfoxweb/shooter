@@ -1,6 +1,6 @@
 export class PlayerShip {
   private x: number;
-  private readonly sx = 5;
+  private readonly sx = 10;
 
   constructor(x: number) {
     this.x = x;
