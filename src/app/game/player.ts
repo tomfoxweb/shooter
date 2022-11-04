@@ -3,7 +3,6 @@ import { Missle } from './missle';
 
 export class Player extends DynamicObject {
   private speed: number;
-  private readonly speedAtStart = 20;
   private readonly bounceSpeed = 5;
   private readonly missleWidth = 5;
   private readonly missleHeight = 32;
@@ -22,12 +21,12 @@ export class Player extends DynamicObject {
     this.speed = 0;
   }
 
-  left() {
-    this.speed = -this.speedAtStart;
+  left(speedAtStart: number) {
+    this.speed = -speedAtStart;
   }
 
-  right() {
-    this.speed = this.speedAtStart;
+  right(speedAtStart: number) {
+    this.speed = speedAtStart;
   }
 
   bounceRight() {

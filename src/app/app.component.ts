@@ -34,14 +34,14 @@ export class AppComponent implements AfterViewInit {
   @HostListener('window:keydown.ArrowRight', ['$event'])
   handleArrowRight(event: KeyboardEvent) {
     if (this.imagesLoaded && this.game) {
-      this.game.right();
+      this.game.right(20);
     }
   }
 
   @HostListener('window:keydown.ArrowLeft', ['$event'])
   handleArrowLeft(event: KeyboardEvent) {
     if (this.imagesLoaded && this.game) {
-      this.game.left();
+      this.game.left(20);
     }
   }
 
@@ -104,10 +104,12 @@ export class AppComponent implements AfterViewInit {
       return;
     }
     if (sx > sy) {
+      const diffX = Math.trunc(Math.abs(this.touchEndX - this.touchStartX));
+      const speed = diffX % 20;
       if (this.touchEndX > this.touchStartX) {
-        this.game.right();
+        this.game.right(speed);
       } else {
-        this.game.left();
+        this.game.left(speed);
       }
     } else {
       this.game.fire();

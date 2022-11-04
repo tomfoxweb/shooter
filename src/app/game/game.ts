@@ -45,12 +45,12 @@ export class Game {
     this.startGameLoop();
   }
 
-  left() {
-    this.player.left();
+  left(speedAtStart: number) {
+    this.player.left(speedAtStart);
   }
 
-  right() {
-    this.player.right();
+  right(speedAtStart: number) {
+    this.player.right(speedAtStart);
   }
 
   fire() {
