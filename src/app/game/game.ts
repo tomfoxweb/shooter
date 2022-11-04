@@ -65,6 +65,9 @@ export class Game {
 
   restart() {
     this.player = this.createPlayer();
+    this.missles = [];
+    this.enemies = [];
+    this.timeNextEnemySpawn = performance.now();
   }
 
   private startGameLoop() {
@@ -87,7 +90,10 @@ export class Game {
     this.enemies.forEach((x, index) => {
       x.move();
       if (intersect(x.getBounds(), this.bottomBorder)) {
-        this.enemies.splice(index, 1);
+        this.gameOver();
+      }
+      if (intersect(x.getBounds(), this.player.getBounds())) {
+        this.gameOver();
       }
     });
   }
@@ -128,5 +134,10 @@ export class Game {
     const y = -height;
     const image = this.imageProvider.getImage(DrawableType.Enemy);
     return new Enemy(x, y, width, height, image);
+  }
+
+  private gameOver() {
+    alert('Game Over!');
+    this.restart();
   }
 }
