@@ -81,10 +81,16 @@ export class Game {
   }
 
   private move() {
-    this.missles.forEach((x, index) => {
-      x.move();
-      if (intersect(x.getBounds(), this.topBorder)) {
-        this.missles.splice(index, 1);
+    this.missles.forEach((missle, missleIndex) => {
+      missle.move();
+      this.enemies.forEach((enemy, enemyIndex) => {
+        if (intersect(missle.getBounds(), enemy.getBounds())) {
+          this.missles.splice(missleIndex, 1);
+          this.enemies.splice(enemyIndex, 1);
+        }
+      });
+      if (intersect(missle.getBounds(), this.topBorder)) {
+        this.missles.splice(missleIndex, 1);
       }
     });
     this.enemies.forEach((x, index) => {
