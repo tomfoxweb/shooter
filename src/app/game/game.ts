@@ -70,8 +70,12 @@ export class Game {
   }
 
   private move() {
-    this.missles.forEach((x) => {
+    this.missles.forEach((x, index) => {
       x.move();
+      if (intersect(x.getBounds(), this.topBorder)) {
+        this.missles.splice(index, 1);
+      }
+      console.log(this.missles.length);
     });
   }
 
