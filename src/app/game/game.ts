@@ -5,6 +5,7 @@ import { Enemy } from './enemy';
 import { intersect } from './intersect';
 import { Missle } from './missle';
 import { Player } from './player';
+import { Star } from './star';
 
 export class Game {
   private imageProvider: ImageProviderService;
@@ -13,6 +14,7 @@ export class Game {
   private player: Player;
   private enemies: Enemy[];
   private missles: Missle[];
+  private stars: Star[];
   private leftBorder: Rectangle;
   private rightBorder: Rectangle;
   private topBorder: Rectangle;
@@ -33,6 +35,7 @@ export class Game {
     this.topBorder = this.createTopBorder();
     this.bottomBorder = this.createBottomBorder();
     this.player = this.createPlayer();
+    this.stars = this.createStars();
     this.missles = [];
     this.enemies = [];
     this.timeNextEnemySpawn = performance.now();
@@ -112,6 +115,9 @@ export class Game {
   private draw() {
     this.ctx.save();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.stars.forEach((x) => {
+      x.draw(this.ctx);
+    });
     this.player.draw(this.ctx);
     this.missles.forEach((x) => {
       x.draw(this.ctx);
@@ -177,6 +183,28 @@ export class Game {
       w: this.canvas.width,
       h: 1000,
     };
+  }
+
+  private createStars(): Star[] {
+    const images = [
+      this.imageProvider.getImage(DrawableType.Star1),
+      this.imageProvider.getImage(DrawableType.Star2),
+      this.imageProvider.getImage(DrawableType.Star3),
+      this.imageProvider.getImage(DrawableType.Star4),
+      this.imageProvider.getImage(DrawableType.Star5),
+    ];
+    const stars: Star[] = [];
+    images.forEach((image) => {
+      for (let i = 0; i < 30; i++) {
+        const x = Math.trunc(Math.random() * this.canvas.width);
+        const y = Math.trunc(Math.random() * this.canvas.height);
+        const size = Math.trunc(Math.random() * 2 + 10);
+        const star = new Star(x, y, size, size, image);
+        stars.push(star);
+      }
+    });
+
+    return stars;
   }
 
   private gameOver() {

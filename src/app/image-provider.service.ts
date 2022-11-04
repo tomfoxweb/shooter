@@ -22,6 +22,11 @@ export class ImageProviderService {
       [DrawableType.Player, { url: 'assets/images/player.png' }],
       [DrawableType.Missle, { url: 'assets/images/missle.png' }],
       [DrawableType.Enemy, { url: 'assets/images/enemy.png' }],
+      [DrawableType.Star1, { url: 'assets/images/star1.png' }],
+      [DrawableType.Star2, { url: 'assets/images/star2.png' }],
+      [DrawableType.Star3, { url: 'assets/images/star3.png' }],
+      [DrawableType.Star4, { url: 'assets/images/star4.png' }],
+      [DrawableType.Star5, { url: 'assets/images/star5.png' }],
     ]);
   }
 
