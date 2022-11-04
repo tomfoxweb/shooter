@@ -1,4 +1,3 @@
-import { TitleStrategy } from '@angular/router';
 import { ImageProviderService } from '../image-provider.service';
 import { Rectangle } from './boundable';
 import { DrawableType } from './drawable';
@@ -19,25 +18,20 @@ export class Game {
   private topBorder: Rectangle;
   private bottomBorder: Rectangle;
   private timeNextEnemySpawn: number;
+  private readonly playerWidth = 100;
+  private readonly playerHeight = 100;
+  private readonly enemyWidth = 97;
+  private readonly enemyHeight = 70;
+  private readonly timerInterval = 16;
 
   constructor(imageProvider: ImageProviderService, canvas: HTMLCanvasElement) {
     this.imageProvider = imageProvider;
     this.canvas = canvas;
-    this.leftBorder = { x: -1000, y: 0, w: 1000, h: this.canvas.height };
-    this.rightBorder = {
-      x: this.canvas.width,
-      y: 0,
-      w: 1000,
-      h: this.canvas.height,
-    };
-    this.topBorder = { x: 0, y: -1000, w: this.canvas.width, h: 1000 };
-    this.bottomBorder = {
-      x: 0,
-      y: this.canvas.height,
-      w: this.canvas.width,
-      h: 1000,
-    };
     this.ctx = this.canvas.getContext('2d')!;
+    this.leftBorder = this.createLeftBorder();
+    this.rightBorder = this.createRightBorder();
+    this.topBorder = this.createTopBorder();
+    this.bottomBorder = this.createBottomBorder();
     this.player = this.createPlayer();
     this.missles = [];
     this.enemies = [];
@@ -67,16 +61,28 @@ export class Game {
 
   private startGameLoop() {
     window.setInterval(() => {
-      if (performance.now() > this.timeNextEnemySpawn) {
-        this.spawnEnemy();
-      }
+      this.checkForSpawnEnemy();
       this.move();
       this.draw();
-    }, 16);
+    }, this.timerInterval);
   }
 
   private move() {
     this.movePlayer();
+    this.moveMissles();
+    this.moveEnemies();
+  }
+
+  private movePlayer() {
+    if (intersect(this.player.getBounds(), this.leftBorder)) {
+      this.player.bounceRight();
+    } else if (intersect(this.player.getBounds(), this.rightBorder)) {
+      this.player.bounceLeft();
+    }
+    this.player.move();
+  }
+
+  private moveMissles() {
     this.missles.forEach((missle, missleIndex) => {
       missle.move();
       this.enemies.forEach((enemy, enemyIndex) => {
@@ -89,6 +95,9 @@ export class Game {
         this.missles.splice(missleIndex, 1);
       }
     });
+  }
+
+  private moveEnemies() {
     this.enemies.forEach((x, index) => {
       x.move();
       if (intersect(x.getBounds(), this.bottomBorder)) {
@@ -98,15 +107,6 @@ export class Game {
         this.gameOver();
       }
     });
-  }
-
-  private movePlayer() {
-    if (intersect(this.player.getBounds(), this.leftBorder)) {
-      this.player.bounceRight();
-    } else if (intersect(this.player.getBounds(), this.rightBorder)) {
-      this.player.bounceLeft();
-    }
-    this.player.move();
   }
 
   private draw() {
@@ -122,29 +122,61 @@ export class Game {
     this.ctx.restore();
   }
 
-  private spawnEnemy() {
+  private checkForSpawnEnemy() {
+    if (performance.now() < this.timeNextEnemySpawn) {
+      return;
+    }
     this.enemies.push(this.createEnemy());
     const delay = Math.random() * 10000 + 300;
     this.timeNextEnemySpawn = performance.now() + delay;
   }
 
   private createPlayer(): Player {
-    const playerWidth = 100;
-    const playerHeight = 100;
-    const x = this.canvas.width / 2 - playerWidth / 2;
-    const y = this.canvas.height - playerHeight - 10;
+    const x = this.canvas.width / 2 - this.playerWidth / 2;
+    const y = this.canvas.height - this.playerHeight - 10;
     const image = this.imageProvider.getImage(DrawableType.Player);
     const missleImage = this.imageProvider.getImage(DrawableType.Missle);
-    return new Player(x, y, playerWidth, playerHeight, image, missleImage);
+    return new Player(
+      x,
+      y,
+      this.playerWidth,
+      this.playerHeight,
+      image,
+      missleImage
+    );
   }
 
   private createEnemy(): Enemy {
-    const width = 97;
-    const height = 70;
-    const x = Math.trunc(Math.random() * (this.canvas.width - width));
-    const y = -height;
+    const x = Math.trunc(Math.random() * (this.canvas.width - this.enemyWidth));
+    const y = -this.enemyHeight;
     const image = this.imageProvider.getImage(DrawableType.Enemy);
-    return new Enemy(x, y, width, height, image);
+    return new Enemy(x, y, this.enemyWidth, this.enemyHeight, image);
+  }
+
+  private createLeftBorder(): Rectangle {
+    return { x: -1000, y: 0, w: 1000, h: this.canvas.height };
+  }
+
+  private createRightBorder(): Rectangle {
+    return {
+      x: this.canvas.width,
+      y: 0,
+      w: 1000,
+      h: this.canvas.height,
+    };
+  }
+
+  private createTopBorder(): Rectangle {
+    return { x: 0, y: -1000, w: this.canvas.width, h: 1000 };
+  }
+
+  private createBottomBorder(): Rectangle {
+    return {
+      x: 0,
+      y: this.canvas.height,
+      w: this.canvas.width,
+      h: 1000,
+    };
   }
 
   private gameOver() {
