@@ -16,7 +16,7 @@ import { ImageProviderService } from './image-provider.service';
 export class AppComponent implements AfterViewInit {
   title = 'shooter';
   pauseCaption = 'Pause';
-  enemyLeftCount = 100;
+  enemyLeftCount = 50;
   private game!: Game;
   private imagesLoaded = false;
   private touchStartX = 0;
@@ -74,6 +74,7 @@ export class AppComponent implements AfterViewInit {
     const css = window.getComputedStyle(canvas);
     canvas.width = Number.parseInt(css.width);
     canvas.height = Number.parseInt(css.height);
+    this.showLoadingText();
     await this.imageProvider.loadImages();
     this.imagesLoaded = true;
     this.game = new Game(this.imageProvider, canvas, this);
@@ -129,5 +130,17 @@ export class AppComponent implements AfterViewInit {
 
   setEnemyLeftCount(enemyLeftCount: number) {
     this.enemyLeftCount = enemyLeftCount;
+  }
+
+  private showLoadingText() {
+    const canvas = this.canvasGame.nativeElement;
+    const ctx = canvas.getContext('2d')!;
+    ctx.save();
+    ctx.font = '36px monospace';
+    ctx.fillStyle = 'white';
+    const x = canvas.width / 2 - 90;
+    const y = canvas.height / 2 - 20;
+    ctx.fillText('Loading...', x, y);
+    ctx.restore();
   }
 }

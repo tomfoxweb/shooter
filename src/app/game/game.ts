@@ -270,7 +270,7 @@ export class Game {
     this.ctx.save();
     this.ctx.font = '36px monospace';
     this.ctx.fillStyle = 'gold';
-    const x = this.canvas.width / 2 - 50;
+    const x = this.canvas.width / 2 - 60;
     const y = this.canvas.height / 2 - 20;
     this.ctx.fillText(this.message, x, y);
     this.ctx.restore();
