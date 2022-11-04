@@ -26,7 +26,7 @@ export class Game {
   private readonly enemyWidth = 97;
   private readonly enemyHeight = 70;
   private readonly timerInterval = 16;
-  private readonly enemyTotalSpawnCount = 10;
+  private readonly enemyTotalSpawnCount = 50;
   private enemySpawnCount: number;
   private enemyLeftCount: number;
   private isPaused = false;
