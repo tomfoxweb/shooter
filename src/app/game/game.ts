@@ -127,7 +127,7 @@ export class Game {
       return;
     }
     this.enemies.push(this.createEnemy());
-    const delay = Math.random() * 10000 + 300;
+    const delay = Math.random() * 2000 + 500;
     this.timeNextEnemySpawn = performance.now() + delay;
   }
 
