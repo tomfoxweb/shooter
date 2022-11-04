@@ -1,6 +1,7 @@
 import { ImageProviderService } from '../image-provider.service';
 import { Rectangle } from './boundable';
 import { DrawableType } from './drawable';
+import { Enemy } from './enemy';
 import { intersect } from './intersect';
 import { Missle } from './missle';
 import { Player } from './player';
@@ -10,11 +11,13 @@ export class Game {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private player: Player;
+  private enemies: Enemy[];
   private missles: Missle[];
   private leftBorder: Rectangle;
   private rightBorder: Rectangle;
   private topBorder: Rectangle;
   private bottomBorder: Rectangle;
+  private timeNextEnemySpawn: number;
 
   constructor(imageProvider: ImageProviderService, canvas: HTMLCanvasElement) {
     this.imageProvider = imageProvider;
@@ -36,6 +39,8 @@ export class Game {
     this.ctx = this.canvas.getContext('2d')!;
     this.player = this.createPlayer();
     this.missles = [];
+    this.enemies = [];
+    this.timeNextEnemySpawn = performance.now();
     this.startGameLoop();
   }
 
@@ -64,6 +69,9 @@ export class Game {
 
   private startGameLoop() {
     window.setInterval(() => {
+      if (performance.now() > this.timeNextEnemySpawn) {
+        this.spawnEnemy();
+      }
       this.move();
       this.draw();
     }, 16);
@@ -75,7 +83,12 @@ export class Game {
       if (intersect(x.getBounds(), this.topBorder)) {
         this.missles.splice(index, 1);
       }
-      console.log(this.missles.length);
+    });
+    this.enemies.forEach((x, index) => {
+      x.move();
+      if (intersect(x.getBounds(), this.bottomBorder)) {
+        this.enemies.splice(index, 1);
+      }
     });
   }
 
@@ -86,7 +99,16 @@ export class Game {
     this.missles.forEach((x) => {
       x.draw(this.ctx);
     });
+    this.enemies.forEach((x) => {
+      x.draw(this.ctx);
+    });
     this.ctx.restore();
+  }
+
+  private spawnEnemy() {
+    this.enemies.push(this.createEnemy());
+    const delay = Math.random() * 10000 + 300;
+    this.timeNextEnemySpawn = performance.now() + delay;
   }
 
   private createPlayer(): Player {
@@ -97,5 +119,14 @@ export class Game {
     const image = this.imageProvider.getImage(DrawableType.Player);
     const missleImage = this.imageProvider.getImage(DrawableType.Missle);
     return new Player(x, y, playerWidth, playerHeight, image, missleImage);
+  }
+
+  private createEnemy(): Enemy {
+    const width = 97;
+    const height = 70;
+    const x = Math.trunc(Math.random() * (this.canvas.width - width));
+    const y = -height;
+    const image = this.imageProvider.getImage(DrawableType.Enemy);
+    return new Enemy(x, y, width, height, image);
   }
 }

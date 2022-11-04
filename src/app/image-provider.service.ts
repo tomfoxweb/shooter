@@ -21,6 +21,7 @@ export class ImageProviderService {
     this.images = new Map([
       [DrawableType.Player, { url: 'assets/images/player.png' }],
       [DrawableType.Missle, { url: 'assets/images/missle.png' }],
+      [DrawableType.Enemy, { url: 'assets/images/enemy.png' }],
     ]);
   }
 
