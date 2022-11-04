@@ -1,3 +1,4 @@
+import { TitleStrategy } from '@angular/router';
 import { ImageProviderService } from '../image-provider.service';
 import { Rectangle } from './boundable';
 import { DrawableType } from './drawable';
@@ -22,19 +23,19 @@ export class Game {
   constructor(imageProvider: ImageProviderService, canvas: HTMLCanvasElement) {
     this.imageProvider = imageProvider;
     this.canvas = canvas;
-    this.leftBorder = { x: -10, y: 0, w: 10, h: this.canvas.height };
+    this.leftBorder = { x: -1000, y: 0, w: 1000, h: this.canvas.height };
     this.rightBorder = {
       x: this.canvas.width,
       y: 0,
-      w: 10,
+      w: 1000,
       h: this.canvas.height,
     };
-    this.topBorder = { x: 0, y: -10, w: this.canvas.width, h: 10 };
+    this.topBorder = { x: 0, y: -1000, w: this.canvas.width, h: 1000 };
     this.bottomBorder = {
       x: 0,
       y: this.canvas.height,
       w: this.canvas.width,
-      h: 10,
+      h: 1000,
     };
     this.ctx = this.canvas.getContext('2d')!;
     this.player = this.createPlayer();
@@ -45,16 +46,10 @@ export class Game {
   }
 
   left() {
-    if (intersect(this.player.getBounds(), this.leftBorder)) {
-      return;
-    }
     this.player.left();
   }
 
   right() {
-    if (intersect(this.player.getBounds(), this.rightBorder)) {
-      return;
-    }
     this.player.right();
   }
 
@@ -81,6 +76,7 @@ export class Game {
   }
 
   private move() {
+    this.movePlayer();
     this.missles.forEach((missle, missleIndex) => {
       missle.move();
       this.enemies.forEach((enemy, enemyIndex) => {
@@ -102,6 +98,15 @@ export class Game {
         this.gameOver();
       }
     });
+  }
+
+  private movePlayer() {
+    if (intersect(this.player.getBounds(), this.leftBorder)) {
+      this.player.bounceRight();
+    } else if (intersect(this.player.getBounds(), this.rightBorder)) {
+      this.player.bounceLeft();
+    }
+    this.player.move();
   }
 
   private draw() {

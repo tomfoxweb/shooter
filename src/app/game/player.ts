@@ -2,7 +2,9 @@ import { DynamicObject } from './dynamic-object';
 import { Missle } from './missle';
 
 export class Player extends DynamicObject {
-  private readonly sx = 20;
+  private speed: number;
+  private readonly speedAtStart = 20;
+  private readonly bounceSpeed = 5;
   private readonly missleWidth = 5;
   private readonly missleHeight = 32;
   private missleImage: HTMLImageElement;
@@ -17,14 +19,35 @@ export class Player extends DynamicObject {
   ) {
     super(x, y, width, height, image);
     this.missleImage = missleImage;
+    this.speed = 0;
   }
 
   left() {
-    this.move(-this.sx, 0);
+    this.speed = -this.speedAtStart;
   }
 
   right() {
-    this.move(this.sx, 0);
+    this.speed = this.speedAtStart;
+  }
+
+  bounceRight() {
+    this.speed = this.bounceSpeed;
+  }
+
+  bounceLeft() {
+    this.speed = -this.bounceSpeed;
+  }
+
+  override move() {
+    if (this.speed === 0) {
+      return;
+    }
+    super.move(this.speed, 0);
+    if (this.speed > 0) {
+      this.speed--;
+    } else if (this.speed < 0) {
+      this.speed++;
+    }
   }
 
   fire(): Missle[] {
