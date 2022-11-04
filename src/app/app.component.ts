@@ -15,12 +15,15 @@ import { ImageProviderService } from './image-provider.service';
 })
 export class AppComponent implements AfterViewInit {
   title = 'shooter';
+  pauseCaption = 'Pause';
+  enemyLeftCount = 100;
   private game!: Game;
   private imagesLoaded = false;
   private touchStartX = 0;
   private touchStartY = 0;
   private touchEndX = 0;
   private touchEndY = 0;
+  private isPaused = false;
 
   @ViewChild('canvasGame') canvasGame!: ElementRef<HTMLCanvasElement>;
 
@@ -73,7 +76,7 @@ export class AppComponent implements AfterViewInit {
     canvas.height = Number.parseInt(css.height);
     await this.imageProvider.loadImages();
     this.imagesLoaded = true;
-    this.game = new Game(this.imageProvider, canvas);
+    this.game = new Game(this.imageProvider, canvas, this);
   }
 
   private setStartTouchPosition(x: number, y: number): void {
@@ -104,5 +107,27 @@ export class AppComponent implements AfterViewInit {
     } else {
       this.game.fire();
     }
+  }
+
+  restart() {
+    this.game.restart();
+    this.isPaused = false;
+    this.pauseCaption = 'Pause';
+  }
+
+  pause() {
+    if (this.isPaused) {
+      this.game.resume();
+      this.isPaused = false;
+      this.pauseCaption = 'Pause';
+    } else {
+      this.game.pause();
+      this.isPaused = true;
+      this.pauseCaption = 'Resume';
+    }
+  }
+
+  setEnemyLeftCount(enemyLeftCount: number) {
+    this.enemyLeftCount = enemyLeftCount;
   }
 }

@@ -1,1 +1,10 @@
-<canvas #canvasGame class="canvas-game"></canvas>
+<div class="content-container">
+  <div class="toolbar-container">
+    <button (click)="restart()">Restart</button>
+    <button (click)="pause()">{{ pauseCaption }}</button>
+    <label for="outputEnemyLeft">
+      Enemy Left: <output id="outputEnemyLeft">{{ enemyLeftCount }}</output>
+    </label>
+  </div>
+  <canvas #canvasGame class="canvas-game"></canvas>
+</div>

@@ -1,3 +1,4 @@
+import { AppComponent } from '../app.component';
 import { ImageProviderService } from '../image-provider.service';
 import { Rectangle } from './boundable';
 import { DrawableType } from './drawable';
@@ -25,9 +26,21 @@ export class Game {
   private readonly enemyWidth = 97;
   private readonly enemyHeight = 70;
   private readonly timerInterval = 16;
+  private readonly enemyTotalSpawnCount = 10;
+  private enemySpawnCount: number;
+  private enemyLeftCount: number;
+  private isPaused = false;
+  private isGameOver = false;
+  private message: string;
+  private app: AppComponent;
 
-  constructor(imageProvider: ImageProviderService, canvas: HTMLCanvasElement) {
+  constructor(
+    imageProvider: ImageProviderService,
+    canvas: HTMLCanvasElement,
+    app: AppComponent
+  ) {
     this.imageProvider = imageProvider;
+    this.app = app;
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d')!;
     this.leftBorder = this.createLeftBorder();
@@ -38,7 +51,11 @@ export class Game {
     this.stars = this.createStars();
     this.missles = [];
     this.enemies = [];
+    this.enemySpawnCount = 0;
+    this.enemyLeftCount = this.enemyTotalSpawnCount;
+    this.message = 'Loading';
     this.timeNextEnemySpawn = performance.now();
+    this.app.setEnemyLeftCount(this.enemyLeftCount);
     this.startGameLoop();
   }
 
@@ -59,11 +76,28 @@ export class Game {
     this.player = this.createPlayer();
     this.missles = [];
     this.enemies = [];
+    this.isPaused = false;
+    this.isGameOver = false;
+    this.message = '';
+    this.enemySpawnCount = 0;
+    this.enemyLeftCount = this.enemyTotalSpawnCount;
+    this.app.setEnemyLeftCount(this.enemyLeftCount);
     this.timeNextEnemySpawn = performance.now();
+  }
+
+  pause() {
+    this.isPaused = true;
+  }
+
+  resume() {
+    this.isPaused = false;
   }
 
   private startGameLoop() {
     window.setInterval(() => {
+      if (this.isPaused || this.isGameOver) {
+        return;
+      }
       this.checkForSpawnEnemy();
       this.move();
       this.draw();
@@ -92,6 +126,12 @@ export class Game {
         if (intersect(missle.getBounds(), enemy.getBounds())) {
           this.missles.splice(missleIndex, 1);
           this.enemies.splice(enemyIndex, 1);
+          this.enemyLeftCount--;
+          this.app.setEnemyLeftCount(this.enemyLeftCount);
+          if (this.enemyLeftCount <= 0) {
+            this.gameWin();
+            return;
+          }
         }
       });
       if (intersect(missle.getBounds(), this.topBorder)) {
@@ -104,10 +144,12 @@ export class Game {
     this.enemies.forEach((x, index) => {
       x.move();
       if (intersect(x.getBounds(), this.bottomBorder)) {
-        this.gameOver();
+        this.gameFail();
+        return;
       }
       if (intersect(x.getBounds(), this.player.getBounds())) {
-        this.gameOver();
+        this.gameFail();
+        return;
       }
     });
   }
@@ -125,6 +167,9 @@ export class Game {
     this.enemies.forEach((x) => {
       x.draw(this.ctx);
     });
+    if (this.isGameOver) {
+      this.showMessage();
+    }
     this.ctx.restore();
   }
 
@@ -132,6 +177,10 @@ export class Game {
     if (performance.now() < this.timeNextEnemySpawn) {
       return;
     }
+    if (this.enemySpawnCount >= this.enemyTotalSpawnCount) {
+      return;
+    }
+    this.enemySpawnCount++;
     this.enemies.push(this.createEnemy());
     const delay = Math.random() * 2000 + 500;
     this.timeNextEnemySpawn = performance.now() + delay;
@@ -207,8 +256,23 @@ export class Game {
     return stars;
   }
 
-  private gameOver() {
-    alert('Game Over!');
-    this.restart();
+  private gameFail() {
+    this.message = 'Fail!';
+    this.isGameOver = true;
+  }
+
+  private gameWin() {
+    this.message = 'Success!';
+    this.isGameOver = true;
+  }
+
+  private showMessage() {
+    this.ctx.save();
+    this.ctx.font = '36px monospace';
+    this.ctx.fillStyle = 'gold';
+    const x = this.canvas.width / 2 - 50;
+    const y = this.canvas.height / 2 - 20;
+    this.ctx.fillText(this.message, x, y);
+    this.ctx.restore();
   }
 }
