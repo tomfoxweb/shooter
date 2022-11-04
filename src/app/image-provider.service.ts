@@ -21,7 +21,9 @@ export class ImageProviderService {
     this.images = new Map([
       [DrawableType.Player, { url: 'assets/images/player.png' }],
       [DrawableType.Missle, { url: 'assets/images/missle.png' }],
-      [DrawableType.Enemy, { url: 'assets/images/enemy.png' }],
+      [DrawableType.Enemy1, { url: 'assets/images/enemy1.png' }],
+      [DrawableType.Enemy2, { url: 'assets/images/enemy2.png' }],
+      [DrawableType.Enemy3, { url: 'assets/images/enemy3.png' }],
       [DrawableType.Star1, { url: 'assets/images/star1.png' }],
       [DrawableType.Star2, { url: 'assets/images/star2.png' }],
       [DrawableType.Star3, { url: 'assets/images/star3.png' }],

@@ -1,7 +1,9 @@
 export const enum DrawableType {
   Player,
   Missle,
-  Enemy,
+  Enemy1,
+  Enemy2,
+  Enemy3,
   Star1,
   Star2,
   Star3,

@@ -202,9 +202,15 @@ export class Game {
   }
 
   private createEnemy(): Enemy {
+    const images = [
+      this.imageProvider.getImage(DrawableType.Enemy1),
+      this.imageProvider.getImage(DrawableType.Enemy2),
+      this.imageProvider.getImage(DrawableType.Enemy3),
+    ];
     const x = Math.trunc(Math.random() * (this.canvas.width - this.enemyWidth));
     const y = -this.enemyHeight;
-    const image = this.imageProvider.getImage(DrawableType.Enemy);
+    const imageIndex = Math.trunc(Math.random() * images.length);
+    const image = images[imageIndex];
     return new Enemy(x, y, this.enemyWidth, this.enemyHeight, image);
   }
 

@@ -54,15 +54,15 @@ export class Player extends DynamicObject {
   }
 
   private createLeftMissle(): Missle {
-    return this.createMissle(this.x + 8);
+    return this.createMissle(this.x + 20);
   }
 
   private createRightMissle(): Missle {
-    return this.createMissle(this.x + this.w - 13);
+    return this.createMissle(this.x + this.w - 26);
   }
 
   private createMissle(missleX: number): Missle {
-    const missleY = this.y + 2;
+    const missleY = this.y + 30;
     return new Missle(
       missleX,
       missleY,
