@@ -2,7 +2,7 @@ import { DynamicObject } from './dynamic-object';
 import { Missle } from './missle';
 
 export class Player extends DynamicObject {
-  private readonly sx = 10;
+  private readonly sx = 20;
   private readonly missleWidth = 5;
   private readonly missleHeight = 32;
   private missleImage: HTMLImageElement;
