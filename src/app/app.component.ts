@@ -20,6 +20,13 @@ export class AppComponent implements AfterViewInit {
 
   @ViewChild('canvasGame') canvasGame!: ElementRef<HTMLCanvasElement>;
 
+  @HostListener('window:keydown.ArrowUp', ['$event'])
+  handleArrowUp(event: KeyboardEvent) {
+    if (this.imagesLoaded && this.game) {
+      this.game.fire();
+    }
+  }
+
   @HostListener('window:keydown.ArrowRight', ['$event'])
   handleArrowRight(event: KeyboardEvent) {
     if (this.imagesLoaded && this.game) {

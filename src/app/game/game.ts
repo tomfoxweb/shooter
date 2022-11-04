@@ -10,7 +10,7 @@ export class Game {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private player: Player;
-  private missle: Missle;
+  private missles: Missle[];
   private leftBorder: Rectangle;
   private rightBorder: Rectangle;
   private topBorder: Rectangle;
@@ -35,7 +35,7 @@ export class Game {
     };
     this.ctx = this.canvas.getContext('2d')!;
     this.player = this.createPlayer();
-    this.missle = this.createMissle();
+    this.missles = [];
     this.startGameLoop();
   }
 
@@ -53,21 +53,35 @@ export class Game {
     this.player.right();
   }
 
+  fire() {
+    const missles = this.player.fire();
+    this.missles.push(...missles);
+  }
+
   restart() {
     this.player = this.createPlayer();
   }
 
   private startGameLoop() {
     window.setInterval(() => {
+      this.move();
       this.draw();
     }, 16);
+  }
+
+  private move() {
+    this.missles.forEach((x) => {
+      x.move();
+    });
   }
 
   private draw() {
     this.ctx.save();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.player.draw(this.ctx);
-    this.missle.draw(this.ctx);
+    this.missles.forEach((x) => {
+      x.draw(this.ctx);
+    });
     this.ctx.restore();
   }
 
@@ -77,15 +91,7 @@ export class Game {
     const x = this.canvas.width / 2;
     const y = this.canvas.height - playerHeight - 10;
     const image = this.imageProvider.getImage(DrawableType.Player);
-    return new Player(x, y, playerWidth, playerHeight, image);
-  }
-
-  private createMissle(): Missle {
-    const width = 5;
-    const height = 32;
-    const x = this.canvas.width / 2;
-    const y = this.canvas.height / 2;
-    const image = this.imageProvider.getImage(DrawableType.Missle);
-    return new Missle(x, y, width, height, image);
+    const missleImage = this.imageProvider.getImage(DrawableType.Missle);
+    return new Player(x, y, playerWidth, playerHeight, image, missleImage);
   }
 }
