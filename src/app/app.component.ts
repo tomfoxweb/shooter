@@ -45,17 +45,6 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  @HostListener('window:pointerdown', ['$event'])
-  handlePointerDown(event: PointerEvent) {
-    this.setStartTouchPosition(event.clientX, event.clientY);
-  }
-
-  @HostListener('window:pointerup', ['$event'])
-  handlePointerUp(event: PointerEvent) {
-    this.setEndTouchPosition(event.clientX, event.clientY);
-    this.processPointerMove();
-  }
-
   @HostListener('window:touchstart', ['$event'])
   handleTouchDown(event: TouchEvent) {
     if (event.changedTouches.length > 0) {
@@ -100,12 +89,13 @@ export class AppComponent implements AfterViewInit {
   private processPointerMove(): void {
     const sx = Math.abs(this.touchEndX - this.touchStartX);
     const sy = Math.abs(this.touchEndY - this.touchStartY);
-    if (sx + sy < 30) {
+    if (sx + sy < 10) {
       return;
     }
-    if (sx > sy) {
-      const diffX = Math.trunc(Math.abs(this.touchEndX - this.touchStartX));
-      const speed = diffX % 20;
+    if (sx * 2 > sy) {
+      const diffX = Math.abs(this.touchEndX - this.touchStartX);
+      const scale = diffX / this.canvasGame.nativeElement.width;
+      const speed = Math.trunc(scale * 30);
       if (this.touchEndX > this.touchStartX) {
         this.game.right(speed);
       } else {
