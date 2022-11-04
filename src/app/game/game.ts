@@ -131,7 +131,7 @@ export class Game {
   private createPlayer(): Player {
     const playerWidth = 100;
     const playerHeight = 100;
-    const x = this.canvas.width / 2;
+    const x = this.canvas.width / 2 - playerWidth / 2;
     const y = this.canvas.height - playerHeight - 10;
     const image = this.imageProvider.getImage(DrawableType.Player);
     const missleImage = this.imageProvider.getImage(DrawableType.Missle);

@@ -34,14 +34,14 @@ export class AppComponent implements AfterViewInit {
   @HostListener('window:keydown.ArrowRight', ['$event'])
   handleArrowRight(event: KeyboardEvent) {
     if (this.imagesLoaded && this.game) {
-      this.game.right(20);
+      this.game.right(10);
     }
   }
 
   @HostListener('window:keydown.ArrowLeft', ['$event'])
   handleArrowLeft(event: KeyboardEvent) {
     if (this.imagesLoaded && this.game) {
-      this.game.left(20);
+      this.game.left(10);
     }
   }
 
